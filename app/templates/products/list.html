@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% from "macros/catalog.html" import product_card, pagination %}
+
+{% block content %}
+<section class="catalog-hero">
+    <h1 class="catalog-title">Меню кофейни</h1>
+    <p class="catalog-subtitle">
+        Свежеобжаренный кофе, авторские напитки, тёплая выпечка и зёрна для дома.
+    </p>
+</section>
+
+<section class="catalog-controls card" aria-label="Фильтры и поиск">
+    <form class="filter-form" method="get" action="/products">
+        <div class="filter-row">
+            <div class="form-field filter-search">
+                <label for="search-input" class="form-label">Поиск по названию</label>
+                <input
+                    id="search-input"
+                    name="q"
+                    type="search"
+                    class="form-input"
+                    value="{{ search_query }}"
+                    placeholder="Например: капучино, раф, круассан..."
+                >
+            </div>
+
+            <div class="form-field filter-category">
+                <label for="category-select" class="form-label">Категория</label>
+                <select id="category-select" name="category" class="form-input">
+                    <option value="">Все категории</option>
+                    {% for cat in categories %}
+                        <option
+                            value="{{ cat.slug }}"
+                            {% if active_category == cat.slug %}selected{% endif %}
+                        >
+                            {{ cat.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-field filter-sort">
+                <label for="sort-select" class="form-label">Сортировка</label>
+                <select id="sort-select" name="sort" class="form-input">
+                    <option value="default" {% if sort == "default" %}selected{% endif %}>По умолчанию</option>
+                    <option value="price_asc" {% if sort == "price_asc" %}selected{% endif %}>Сначала дешевле</option>
+                    <option value="price_desc" {% if sort == "price_desc" %}selected{% endif %}>Сначала дороже</option>
+                    <option value="name_asc" {% if sort == "name_asc" %}selected{% endif %}>По названию (А–Я)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="filter-actions">
+            <button type="submit" class="btn btn-primary">Применить</button>
+            {% if active_category or search_query or sort != "default" %}
+                <a href="/products" class="btn btn-ghost">Сбросить</a>
+            {% endif %}
+            <span class="catalog-count">Найдено: {{ total }}</span>
+        </div>
+    </form>
+
+    {% if categories %}
+    <div class="category-chips" aria-label="Быстрый выбор категории">
+        <a
+            href="/products{% if search_query or sort != 'default' %}?q={{ search_query|urlencode }}&sort={{ sort }}{% endif %}"
+            class="chip {% if not active_category %}chip-active{% endif %}"
+        >
+            Все
+        </a>
+        {% for cat in categories %}
+            <a
+                href="/products?category={{ cat.slug }}{% if search_query %}&q={{ search_query|urlencode }}{% endif %}{% if sort != 'default' %}&sort={{ sort }}{% endif %}"
+                class="chip {% if active_category == cat.slug %}chip-active{% endif %}"
+            >
+                {{ cat.name }}
+            </a>
+        {% endfor %}
+    </div>
+    {% endif %}
+</section>
+
+{% if products %}
+    <section class="product-grid" aria-label="Список товаров">
+        {% for product in products %}
+            {{ product_card(product) }}
+        {% endfor %}
+    </section>
+
+    {{ pagination(page, pages, active_category, search_query, sort, per_page) }}
+{% else %}
+    <section class="empty-state card" aria-live="polite">
+        <div class="empty-state-icon" aria-hidden="true">☕</div>
+        <h2 class="empty-state-title">Ничего не найдено</h2>
+        <p class="empty-state-text">
+            По вашему запросу товаров нет. Попробуйте изменить фильтры или сбросить поиск.
+        </p>
+        <a href="/products" class="btn btn-primary">Показать всё меню</a>
+    </section>
+{% endif %}
+{% endblock %}

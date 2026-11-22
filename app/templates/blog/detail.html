@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<nav class="breadcrumbs" aria-label="Навигация">
+    <a href="/blog">Блог</a>
+    <span aria-hidden="true">/</span>
+    <span aria-current="page">{{ post.title }}</span>
+</nav>
+
+<article class="card blog-article">
+    {% if post.cover %}
+        <div class="blog-article-cover">
+            <img
+                src="{{ post.cover }}"
+                alt="{{ post.title }}"
+                class="blog-article-img"
+                onerror="this.parentElement.style.display='none';"
+            >
+        </div>
+    {% endif %}
+
+    <div class="blog-article-inner">
+        <header class="blog-article-header">
+            <div class="blog-article-meta">
+                {% if not post.is_published %}
+                    <span class="status-badge status-new">Черновик</span>
+                {% endif %}
+                <span class="blog-card-date">
+                    {% if post.published_at %}
+                        Опубликовано {{ post.published_at.strftime("%d.%m.%Y %H:%M") }}
+                    {% else %}
+                        Создано {{ post.created_at.strftime("%d.%m.%Y %H:%M") }}
+                    {% endif %}
+                </span>
+            </div>
+            <h1 class="blog-article-title">{{ post.title }}</h1>
+        </header>
+
+        <div class="prose">
+            {{ post.body_html | safe }}
+        </div>
+
+        <footer class="blog-article-footer">
+            <a href="/blog" class="btn btn-ghost">← Все статьи</a>
+            {% if is_admin %}
+                <a href="/blog/admin" class="btn btn-primary">Редактировать в админке</a>
+            {% endif %}
+        </footer>
+    </div>
+</article>
+{% endblock %}

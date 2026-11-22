@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+<nav class="breadcrumbs" aria-label="Навигация">
+    <a href="/products">Каталог</a>
+    {% if product.category %}
+        <span aria-hidden="true">/</span>
+        <a href="/products?category={{ product.category.slug }}">{{ product.category.name }}</a>
+    {% endif %}
+    <span aria-hidden="true">/</span>
+    <span aria-current="page">{{ product.name }}</span>
+</nav>
+
+<article class="card product-detail">
+    <div class="product-detail-media">
+        {% if product.image %}
+            <img
+                src="{{ product.image }}"
+                alt="{{ product.name }}"
+                class="product-detail-img"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+            >
+            <div class="product-detail-placeholder" style="display: none;" aria-hidden="true">☕</div>
+        {% else %}
+            <div class="product-detail-placeholder" aria-hidden="true">☕</div>
+        {% endif %}
+    </div>
+
+    <div class="product-detail-info">
+        {% if product.category %}
+            <a class="badge badge-category badge-inline" href="/products?category={{ product.category.slug }}">
+                {{ product.category.name }}
+            </a>
+        {% endif %}
+
+        <h1 class="product-detail-title">{{ product.name }}</h1>
+
+        <p class="product-detail-price">{{ "%.2f"|format(product.price) }} ₽</p>
+
+        <p class="product-detail-stock">
+            {% if product.stock > 0 %}
+                <span class="stock-status stock-in">В наличии: {{ product.stock }} шт.</span>
+            {% else %}
+                <span class="stock-status stock-out">Временно нет в наличии</span>
+            {% endif %}
+        </p>
+
+        <div class="product-detail-desc">
+            <h2>Описание</h2>
+            <p>{{ product.description or "Описание скоро появится." }}</p>
+        </div>
+
+        <div class="product-detail-actions">
+            {% if product.stock > 0 %}
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    data-add-to-cart="{{ product.id }}"
+                >
+                    Добавить в корзину
+                </button>
+            {% else %}
+                <button type="button" class="btn btn-primary" disabled>
+                    Нет в наличии
+                </button>
+            {% endif %}
+            <a href="/products" class="btn btn-ghost">← Назад в каталог</a>
+        </div>
+    </div>
+</article>
+{% endblock %}

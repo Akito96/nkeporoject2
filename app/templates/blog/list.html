@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="page-header blog-header">
+    <div>
+        <h1 class="catalog-title">Блог кофейни</h1>
+        <p class="catalog-subtitle">Рецепты заваривания, гиды по зерну и новости сезонного меню.</p>
+    </div>
+    {% if is_admin %}
+        <a href="/blog/admin" class="btn btn-primary">Управление блогом</a>
+    {% endif %}
+</section>
+
+{% if posts %}
+    <section class="blog-grid" aria-label="Список статей">
+        {% for post in posts %}
+            <article class="card blog-card">
+                <a class="blog-card-media" href="/blog/{{ post.slug }}">
+                    {% if post.cover %}
+                        <img
+                            src="{{ post.cover }}"
+                            alt="{{ post.title }}"
+                            class="blog-card-img"
+                            loading="lazy"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                        >
+                        <div class="product-card-placeholder" style="display: none;" aria-hidden="true">✍️</div>
+                    {% else %}
+                        <div class="product-card-placeholder" aria-hidden="true">✍️</div>
+                    {% endif %}
+                </a>
+
+                <div class="blog-card-body">
+                    <p class="blog-card-date">
+                        {% if post.published_at %}
+                            {{ post.published_at.strftime("%d.%m.%Y") }}
+                        {% else %}
+                            {{ post.created_at.strftime("%d.%m.%Y") }}
+                        {% endif %}
+                    </p>
+                    <h2 class="blog-card-title">
+                        <a href="/blog/{{ post.slug }}">{{ post.title }}</a>
+                    </h2>
+                    <p class="blog-card-excerpt">{{ post.excerpt }}</p>
+                    <a class="btn btn-ghost blog-card-link" href="/blog/{{ post.slug }}">
+                        Читать статью →
+                    </a>
+                </div>
+            </article>
+        {% endfor %}
+    </section>
+
+    {% if pages > 1 %}
+    <nav class="pagination" aria-label="Навигация по страницам блога">
+        {% if page > 1 %}
+            <a class="btn btn-ghost pagination-btn" href="/blog?page={{ page - 1 }}&per_page={{ per_page }}">
+                ← Назад
+            </a>
+        {% else %}
+            <span class="btn btn-ghost pagination-btn is-disabled" aria-disabled="true">← Назад</span>
+        {% endif %}
+
+        <div class="pagination-pages">
+            {% for p in range(1, pages + 1) %}
+                {% if p == page %}
+                    <span class="pagination-num is-current" aria-current="page">{{ p }}</span>
+                {% else %}
+                    <a class="pagination-num" href="/blog?page={{ p }}&per_page={{ per_page }}">{{ p }}</a>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {% if page < pages %}
+            <a class="btn btn-ghost pagination-btn" href="/blog?page={{ page + 1 }}&per_page={{ per_page }}">
+                Вперёд →
+            </a>
+        {% else %}
+            <span class="btn btn-ghost pagination-btn is-disabled" aria-disabled="true">Вперёд →</span>
+        {% endif %}
+    </nav>
+    {% endif %}
+{% else %}
+    <section class="empty-state card">
+        <div class="empty-state-icon" aria-hidden="true">✍️</div>
+        <h2 class="empty-state-title">Статей пока нет</h2>
+        <p class="empty-state-text">Скоро здесь появятся рецепты и заметки наших бариста.</p>
+        <a href="/products" class="btn btn-primary">Перейти в каталог</a>
+    </section>
+{% endif %}
+{% endblock %}

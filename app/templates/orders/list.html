@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="page-header">
+    <h1 class="catalog-title">Мои заказы</h1>
+    <p class="catalog-subtitle">История ваших заказов с зафиксированными ценами на момент покупки.</p>
+</section>
+
+{% if orders %}
+    <div class="orders-list">
+        {% for order in orders %}
+            <article class="card order-card">
+                <header class="order-card-header">
+                    <div>
+                        <h2 class="order-card-title">
+                            <a href="/orders/{{ order.id }}">Заказ №{{ order.id }}</a>
+                        </h2>
+                        <p class="order-card-date">
+                            {{ order.created_at.strftime("%d.%m.%Y %H:%M") }}
+                        </p>
+                    </div>
+                    <span class="status-badge status-{{ order.status.value }}">
+                        {{ status_labels.get(order.status.value, order.status.value) }}
+                    </span>
+                </header>
+
+                <ul class="order-items-list">
+                    {% for item in order.items %}
+                        <li class="order-item-row">
+                            <span>{{ item.product_name }} × {{ item.quantity }}</span>
+                            <span>{{ "%.2f"|format(item.price) }} ₽ / шт. · <strong>{{ "%.2f"|format(item.subtotal) }} ₽</strong></span>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+                <footer class="order-card-footer">
+                    <div class="order-total-group">
+                        <span>Итого:</span>
+                        <strong class="order-card-total">{{ "%.2f"|format(order.total) }} ₽</strong>
+                    </div>
+                    <div class="order-actions">
+                        <a href="/orders/{{ order.id }}" class="btn btn-ghost">Подробнее</a>
+                        <a href="/orders/{{ order.id }}/receipt" class="btn btn-primary">
+                            Скачать чек
+                        </a>
+                    </div>
+                </footer>
+            </article>
+        {% endfor %}
+    </div>
+{% else %}
+    <section class="empty-state card">
+        <div class="empty-state-icon" aria-hidden="true">🧾</div>
+        <h2 class="empty-state-title">Заказов пока нет</h2>
+        <p class="empty-state-text">Оформите первый заказ — он сразу появится здесь.</p>
+        <a href="/products" class="btn btn-primary">Выбрать кофе</a>
+    </section>
+{% endif %}
+{% endblock %}

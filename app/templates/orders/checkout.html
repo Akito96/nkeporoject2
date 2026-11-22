@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="page-header">
+    <h1 class="catalog-title">Оформление заказа</h1>
+    <p class="catalog-subtitle">Проверьте состав заказа перед подтверждением.</p>
+</section>
+
+<div id="checkout-error" class="alert alert-error" role="alert" aria-live="polite" hidden></div>
+<div id="checkout-success" class="alert alert-success" role="status" aria-live="polite" hidden></div>
+
+{% if cart.items %}
+    <div class="card checkout-card">
+        <ul class="checkout-list">
+            {% for item in cart.items %}
+                <li class="checkout-row">
+                    <span>{{ item.name }} × {{ item.quantity }}</span>
+                    <strong>{{ "%.2f"|format(item.subtotal) }} ₽</strong>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <div class="checkout-total">
+            <span>Итого к оплате</span>
+            <strong>{{ "%.2f"|format(cart.total) }} ₽</strong>
+        </div>
+
+        <div class="checkout-actions">
+            <a href="/cart" class="btn btn-ghost">← Вернуться в корзину</a>
+            <button type="button" class="btn btn-primary" id="place-order-btn">
+                Подтвердить заказ
+            </button>
+        </div>
+    </div>
+{% else %}
+    <section class="empty-state card">
+        <div class="empty-state-icon" aria-hidden="true">☕</div>
+        <h2 class="empty-state-title">Корзина пуста</h2>
+        <p class="empty-state-text">Нечего оформлять — сначала выберите товары в каталоге.</p>
+        <a href="/products" class="btn btn-primary">В каталог</a>
+    </section>
+{% endif %}
+{% endblock %}

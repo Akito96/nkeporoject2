@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+<nav class="breadcrumbs" aria-label="Навигация">
+    <a href="/orders">Мои заказы</a>
+    <span aria-hidden="true">/</span>
+    <span aria-current="page">Заказ №{{ order.id }}</span>
+</nav>
+
+<article class="card order-card order-detail-card">
+    <header class="order-card-header">
+        <div>
+            <h1 class="catalog-title">Заказ №{{ order.id }}</h1>
+            <p class="order-card-date">
+                Оформлен {{ order.created_at.strftime("%d.%m.%Y в %H:%M") }}
+            </p>
+        </div>
+        <span class="status-badge status-{{ order.status.value }}">
+            {{ status_labels.get(order.status.value, order.status.value) }}
+        </span>
+    </header>
+
+    <ul class="order-items-list">
+        {% for item in order.items %}
+            <li class="order-item-row">
+                <span>{{ item.product_name }} × {{ item.quantity }}</span>
+                <span>
+                    {{ "%.2f"|format(item.price) }} ₽ / шт. ·
+                    <strong>{{ "%.2f"|format(item.subtotal) }} ₽</strong>
+                </span>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <footer class="order-card-footer">
+        <div class="order-total-group">
+            <span>Итого</span>
+            <strong class="order-card-total">{{ "%.2f"|format(order.total) }} ₽</strong>
+        </div>
+        <div class="order-actions">
+            <a href="/orders" class="btn btn-ghost">← К списку заказов</a>
+            <a href="/orders/{{ order.id }}/receipt" class="btn btn-primary">
+                Скачать чек (PDF)
+            </a>
+        </div>
+    </footer>
+</article>
+{% endblock %}

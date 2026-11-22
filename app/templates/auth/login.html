@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="auth-section" aria-labelledby="login-heading">
+    <div class="card auth-card">
+        <h1 id="login-heading" class="auth-title">Вход в аккаунт</h1>
+        <p class="auth-subtitle">Войдите, чтобы оформлять заказы и просматривать историю.</p>
+
+        <div id="auth-error" class="alert alert-error" role="alert" aria-live="polite" hidden></div>
+        <div id="auth-success" class="alert alert-success" role="status" aria-live="polite" hidden></div>
+
+        <form id="auth-form" class="auth-form" data-endpoint="/auth/login" data-mode="login" novalidate>
+            <div class="form-field">
+                <label for="email" class="form-label">Электронная почта</label>
+                <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    class="form-input"
+                    autocomplete="email"
+                    placeholder="you@example.com"
+                    required
+                >
+            </div>
+
+            <div class="form-field">
+                <label for="password" class="form-label">Пароль</label>
+                <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    class="form-input"
+                    autocomplete="current-password"
+                    placeholder="Введите пароль"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block" id="auth-submit">
+                Войти
+            </button>
+        </form>
+
+        <p class="auth-footer">
+            Нет аккаунта? <a href="/auth/register">Зарегистрироваться</a>
+        </p>
+    </div>
+</section>
+{% endblock %}

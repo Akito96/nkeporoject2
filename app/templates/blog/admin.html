@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="page-header blog-header">
+    <div>
+        <h1 class="catalog-title">Управление блогом</h1>
+        <p class="catalog-subtitle">Создание, редактирование и публикация статей в Markdown.</p>
+    </div>
+    <a href="/blog" class="btn btn-ghost">← К блогу</a>
+</section>
+
+<div id="blog-admin-error" class="alert alert-error" role="alert" aria-live="polite" hidden></div>
+<div id="blog-admin-success" class="alert alert-success" role="status" aria-live="polite" hidden></div>
+
+<div class="blog-admin-layout">
+    <section class="card blog-admin-form-card" aria-labelledby="post-form-heading">
+        <h2 id="post-form-heading" class="summary-title">Новый пост</h2>
+        <form id="blog-post-form" class="auth-form" novalidate>
+            <input type="hidden" id="post-id" name="post_id" value="">
+
+            <div class="form-field">
+                <label for="post-title" class="form-label">Заголовок</label>
+                <input id="post-title" name="title" type="text" class="form-input" required minlength="3" maxlength="200">
+            </div>
+
+            <div class="form-field">
+                <label for="post-slug" class="form-label">Slug (оставьте пустым для автогенерации)</label>
+                <input id="post-slug" name="slug" type="text" class="form-input" placeholder="v60-brewing-guide" maxlength="200">
+            </div>
+
+            <div class="form-field">
+                <label for="post-cover" class="form-label">Обложка (URL или /static/...)</label>
+                <input id="post-cover" name="cover" type="text" class="form-input" placeholder="/static/img/blog-cover.jpg" maxlength="500">
+            </div>
+
+            <div class="form-field">
+                <label for="post-published-at" class="form-label">Дата публикации (необязательно)</label>
+                <input id="post-published-at" name="published_at" type="datetime-local" class="form-input">
+            </div>
+
+            <div class="form-field">
+                <label for="post-body" class="form-label">Текст (Markdown)</label>
+                <textarea id="post-body" name="body_md" class="form-input form-textarea" rows="8" required></textarea>
+            </div>
+
+            <label class="checkbox-field">
+                <input id="post-is-published" name="is_published" type="checkbox">
+                <span>Опубликовать сразу</span>
+            </label>
+
+            <div class="filter-actions">
+                <button type="submit" class="btn btn-primary" id="blog-submit-btn">Сохранить пост</button>
+                <button type="button" class="btn btn-ghost" id="blog-reset-btn" hidden>Отмена</button>
+            </div>
+        </form>
+    </section>
+
+    <section class="card blog-admin-list-card" aria-label="Все посты">
+        <h2 class="summary-title">Все статьи ({{ total }})</h2>
+        {% if posts %}
+            <div class="admin-posts-list" id="admin-posts-list">
+                {% for post in posts %}
+                    <article
+                        class="admin-post-row"
+                        data-post-id="{{ post.id }}"
+                        data-title="{{ post.title }}"
+                        data-slug="{{ post.slug }}"
+                        data-cover="{{ post.cover or '' }}"
+                        data-body="{{ post.body_md }}"
+                        data-published="{{ 'true' if post.is_published else 'false' }}"
+                        data-published-at="{{ post.published_at.strftime('%Y-%m-%dT%H:%M') if post.published_at else '' }}"
+                    >
+                        <div class="admin-post-meta">
+                            <strong><a href="/blog/{{ post.slug }}">{{ post.title }}</a></strong>
+                            <span class="admin-post-slug">/{{ post.slug }}</span>
+                            {% if post.is_published %}
+                                <span class="status-badge status-done">Опубликован</span>
+                            {% else %}
+                                <span class="status-badge status-new">Черновик</span>
+                            {% endif %}
+                        </div>
+                        <div class="order-actions">
+                            <button type="button" class="btn btn-ghost" data-edit-post>Изменить</button>
+                            <button type="button" class="btn btn-ghost btn-danger" data-delete-post>Удалить</button>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="empty-state-text">Постов пока нет.</p>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="/static/js/blog_admin.js" defer></script>
+{% endblock %}

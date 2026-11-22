@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="page-header">
+    <h1 class="catalog-title">Корзина</h1>
+    <p class="catalog-subtitle">Изменяйте количество — сумма пересчитывается автоматически.</p>
+</section>
+
+<div id="cart-alert" class="alert alert-error" role="alert" aria-live="polite" hidden></div>
+
+<div id="cart-root">
+    {% if cart.items %}
+        <div class="cart-layout" id="cart-content">
+            <div class="cart-items" id="cart-items-list">
+                {% for item in cart.items %}
+                    <article
+                        class="card cart-item"
+                        data-product-id="{{ item.product_id }}"
+                        data-stock="{{ item.stock }}"
+                    >
+                        <div class="cart-item-info">
+                            <h2 class="cart-item-title">
+                                <a href="/products/{{ item.product_id }}">{{ item.name }}</a>
+                            </h2>
+                            <p class="cart-item-price">{{ "%.2f"|format(item.price) }} ₽ за шт.</p>
+                        </div>
+
+                        <div class="cart-item-controls">
+                            <div class="qty-control" role="group" aria-label="Количество {{ item.name }}">
+                                <button
+                                    type="button"
+                                    class="btn btn-ghost qty-btn"
+                                    data-qty-delta="-1"
+                                    aria-label="Уменьшить количество"
+                                >
+                                    −
+                                </button>
+                                <input
+                                    type="number"
+                                    class="form-input qty-input"
+                                    value="{{ item.quantity }}"
+                                    min="1"
+                                    max="{{ item.stock }}"
+                                    aria-label="Количество"
+                                >
+                                <button
+                                    type="button"
+                                    class="btn btn-ghost qty-btn"
+                                    data-qty-delta="1"
+                                    aria-label="Увеличить количество"
+                                >
+                                    +
+                                </button>
+                            </div>
+
+                            <span class="cart-item-subtotal" data-item-subtotal>
+                                {{ "%.2f"|format(item.subtotal) }} ₽
+                            </span>
+
+                            <button
+                                type="button"
+                                class="btn btn-ghost btn-danger"
+                                data-remove-item
+                            >
+                                Удалить
+                            </button>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+
+            <aside class="card cart-summary">
+                <h2 class="summary-title">Итого</h2>
+                <div class="summary-row">
+                    <span>Товаров:</span>
+                    <strong id="cart-total-items">{{ cart.total_items }}</strong>
+                </div>
+                <div class="summary-row summary-total">
+                    <span>К оплате:</span>
+                    <strong id="cart-total-price">{{ "%.2f"|format(cart.total) }} ₽</strong>
+                </div>
+                <a href="/orders/checkout" class="btn btn-primary btn-block">
+                    Перейти к оформлению
+                </a>
+                <button type="button" class="btn btn-ghost btn-block" id="clear-cart-btn">
+                    Очистить корзину
+                </button>
+            </aside>
+        </div>
+    {% endif %}
+
+    <section
+        class="empty-state card"
+        id="cart-empty"
+        {% if cart.items %}hidden{% endif %}
+    >
+        <div class="empty-state-icon" aria-hidden="true">🛒</div>
+        <h2 class="empty-state-title">Корзина пуста</h2>
+        <p class="empty-state-text">Добавьте напитки или десерты из каталога, чтобы оформить заказ.</p>
+        <a href="/products" class="btn btn-primary">Перейти в каталог</a>
+    </section>
+</div>
+{% endblock %}
