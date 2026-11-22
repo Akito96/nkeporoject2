@@ -195,7 +195,7 @@ SEED_PRODUCTS: list[SeedProduct] = [
             "Мытая обработка, светлая обжарка под фильтр. Вкус: жасмин, белый персик, лайм."
         ),
         "price": Decimal("950.00"),
-        "image": "/static/img/beans-ethiopia.jpg",
+        "image": "/static/img/espresso.jpg",
         "stock": 25,
         "is_active": True,
     },
@@ -206,7 +206,7 @@ SEED_PRODUCTS: list[SeedProduct] = [
             "Средняя обжарка под эспрессо. Вкус: молочный шоколад, фундук и красное яблоко."
         ),
         "price": Decimal("890.00"),
-        "image": "/static/img/beans-colombia.jpg",
+        "image": "/static/img/americano.jpg",
         "stock": 30,
         "is_active": True,
     },
@@ -215,7 +215,7 @@ SEED_PRODUCTS: list[SeedProduct] = [
         "name": "Керамическая воронка V60-02",
         "description": "Классическая воронка для альтернативного заваривания на 1–4 чашки.",
         "price": Decimal("2450.00"),
-        "image": "/static/img/v60-dripper.jpg",
+        "image": "/static/img/flat-white.jpg",
         "stock": 10,
         "is_active": True,
     },
@@ -225,7 +225,7 @@ SEED_POSTS: list[SeedPost] = [
     {
         "title": "Как выбрать зерно для домашнего эспрессо",
         "slug": "how-to-choose-espresso-beans",
-        "cover": "/static/img/blog-espresso.jpg",
+        "cover": "/static/img/espresso.jpg",
         "body_md": (
             "## На что смотреть на пачке\n\n"
             "При выборе зерна под эспрессо обращайте внимание на **дату обжарки** "
@@ -239,7 +239,7 @@ SEED_POSTS: list[SeedPost] = [
     {
         "title": "Гид по завариванию в воронке V60",
         "slug": "v60-brewing-guide",
-        "cover": "/static/img/blog-v60.jpg",
+        "cover": "/static/img/flat-white.jpg",
         "body_md": (
             "## Базовый рецепт\n\n"
             "Используйте пропорцию **15 г кофе на 250 мл воды** температурой 93 °C.\n\n"
@@ -253,7 +253,7 @@ SEED_POSTS: list[SeedPost] = [
     {
         "title": "Сезонное меню: почему мы полюбили юдзу и лаванду",
         "slug": "seasonal-menu-yuzu-lavender",
-        "cover": "/static/img/blog-seasonal.jpg",
+        "cover": "/static/img/lavender-raf.jpg",
         "body_md": (
             "## Баланс вкуса в авторских напитках\n\n"
             "В новом сезоне мы отказались от промышленных сиропов и варим основы "
@@ -314,6 +314,8 @@ async def seed_database(session: AsyncSession) -> None:
                     is_active=prod_data["is_active"],
                 )
             )
+        elif existing_product.image != prod_data["image"]:
+            existing_product.image = prod_data["image"]
 
     # 4. Посты блога (идемпотентно по slug)
     now = datetime.now(UTC)
@@ -337,6 +339,8 @@ async def seed_database(session: AsyncSession) -> None:
                     published_at=published_at,
                 )
             )
+        elif existing_post.cover != post_data["cover"]:
+            existing_post.cover = post_data["cover"]
 
     await session.commit()
 

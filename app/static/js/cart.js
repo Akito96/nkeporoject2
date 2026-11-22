@@ -19,7 +19,7 @@ function buildJsonHeaders() {
 }
 
 function formatPrice(value) {
-    return `${Number(value).toFixed(2)} ₽`;
+    return `${Math.round(Number(value))} ₽`;
 }
 
 function showToast(message, isError = false) {

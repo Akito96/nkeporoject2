@@ -1,4 +1,4 @@
-__pycache__/
+ __pycache__/
 *.py[cod]
 .venv/
 venv/
@@ -9,3 +9,5 @@ app/static/uploads/*
 !app/static/uploads/.gitkeep
 GEMINI.md
 *.md
+!README.md
+backups/

@@ -1,13 +1,44 @@
 {% extends "base.html" %}
 {% from "macros/catalog.html" import product_card, pagination %}
+{% from "macros/ui.html" import empty_state, page_header, stories_strip %}
+
+{% set promo_stories = [
+    {
+        "title": "Новое меню",
+        "href": "/products?category=signature-drinks",
+        "image": "/static/img/lavender-raf.jpg"
+    },
+    {
+        "title": "Классический кофе",
+        "href": "/products?category=classic-coffee",
+        "image": "/static/img/cappuccino.jpg"
+    },
+    {
+        "title": "Свежая выпечка",
+        "href": "/products?category=desserts",
+        "image": "/static/img/almond-croissant.jpg"
+    },
+    {
+        "title": "Авторские напитки",
+        "href": "/products?category=signature-drinks",
+        "image": "/static/img/bumble.jpg"
+    },
+    {
+        "title": "Шоколад и десерты",
+        "href": "/products?category=desserts",
+        "image": "/static/img/brownie.jpg"
+    },
+    {
+        "title": "Журнал бариста",
+        "href": "/blog",
+        "image": "/static/img/flat-white.jpg"
+    }
+] %}
 
 {% block content %}
-<section class="catalog-hero">
-    <h1 class="catalog-title">Меню кофейни</h1>
-    <p class="catalog-subtitle">
-        Свежеобжаренный кофе, авторские напитки, тёплая выпечка и зёрна для дома.
-    </p>
-</section>
+{{ stories_strip(promo_stories) }}
+
+{{ page_header("Меню кофейни", "Свежеобжаренный кофе, авторские напитки, тёплая выпечка и зёрна для дома.") }}
 
 <section class="catalog-controls card" aria-label="Фильтры и поиск">
     <form class="filter-form" method="get" action="/products">
@@ -88,13 +119,12 @@
 
     {{ pagination(page, pages, active_category, search_query, sort, per_page) }}
 {% else %}
-    <section class="empty-state card" aria-live="polite">
-        <div class="empty-state-icon" aria-hidden="true">☕</div>
-        <h2 class="empty-state-title">Ничего не найдено</h2>
-        <p class="empty-state-text">
-            По вашему запросу товаров нет. Попробуйте изменить фильтры или сбросить поиск.
-        </p>
-        <a href="/products" class="btn btn-primary">Показать всё меню</a>
-    </section>
+    {{ empty_state(
+        icon="☕",
+        title="Ничего не найдено",
+        text="По вашему запросу товаров нет. Попробуйте изменить фильтры или сбросить поиск.",
+        action_href="/products",
+        action_label="Показать всё меню"
+    ) }}
 {% endif %}
 {% endblock %}

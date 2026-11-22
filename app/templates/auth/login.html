@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "macros/ui.html" import alert_box %}
 
 {% block content %}
 <section class="auth-section" aria-labelledby="login-heading">
@@ -6,8 +7,8 @@
         <h1 id="login-heading" class="auth-title">Вход в аккаунт</h1>
         <p class="auth-subtitle">Войдите, чтобы оформлять заказы и просматривать историю.</p>
 
-        <div id="auth-error" class="alert alert-error" role="alert" aria-live="polite" hidden></div>
-        <div id="auth-success" class="alert alert-success" role="status" aria-live="polite" hidden></div>
+        {{ alert_box("auth-error", "error") }}
+        {{ alert_box("auth-success", "success") }}
 
         <form id="auth-form" class="auth-form" data-endpoint="/auth/login" data-mode="login" novalidate>
             <div class="form-field">
@@ -44,6 +45,30 @@
         <p class="auth-footer">
             Нет аккаунта? <a href="/auth/register">Зарегистрироваться</a>
         </p>
+
+        {% if debug %}
+            <div class="demo-accounts">
+                <p class="demo-accounts-title">Быстрый вход (демо-аккаунты)</p>
+                <div class="demo-accounts-actions">
+                    <button
+                        type="button"
+                        class="btn btn-ghost btn-sm"
+                        data-demo-email="admin@coffee.local"
+                        data-demo-password="AdminPassword123!"
+                    >
+                        Админ
+                    </button>
+                    <button
+                        type="button"
+                        class="btn btn-ghost btn-sm"
+                        data-demo-email="user@coffee.local"
+                        data-demo-password="UserPassword123!"
+                    >
+                        Пользователь
+                    </button>
+                </div>
+            </div>
+        {% endif %}
     </div>
 </section>
 {% endblock %}

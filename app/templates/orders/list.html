@@ -1,10 +1,8 @@
 {% extends "base.html" %}
+{% from "macros/ui.html" import empty_state, page_header, status_badge %}
 
 {% block content %}
-<section class="page-header">
-    <h1 class="catalog-title">Мои заказы</h1>
-    <p class="catalog-subtitle">История ваших заказов с зафиксированными ценами на момент покупки.</p>
-</section>
+{{ page_header("Мои заказы", "История ваших заказов с зафиксированными ценами на момент покупки.") }}
 
 {% if orders %}
     <div class="orders-list">
@@ -19,16 +17,14 @@
                             {{ order.created_at.strftime("%d.%m.%Y %H:%M") }}
                         </p>
                     </div>
-                    <span class="status-badge status-{{ order.status.value }}">
-                        {{ status_labels.get(order.status.value, order.status.value) }}
-                    </span>
+                    {{ status_badge(order.status.value, status_labels) }}
                 </header>
 
                 <ul class="order-items-list">
                     {% for item in order.items %}
                         <li class="order-item-row">
                             <span>{{ item.product_name }} × {{ item.quantity }}</span>
-                            <span>{{ "%.2f"|format(item.price) }} ₽ / шт. · <strong>{{ "%.2f"|format(item.subtotal) }} ₽</strong></span>
+                            <span>{{ "%.0f"|format(item.price) }} ₽ / шт. · <strong>{{ "%.0f"|format(item.subtotal) }} ₽</strong></span>
                         </li>
                     {% endfor %}
                 </ul>
@@ -36,7 +32,7 @@
                 <footer class="order-card-footer">
                     <div class="order-total-group">
                         <span>Итого:</span>
-                        <strong class="order-card-total">{{ "%.2f"|format(order.total) }} ₽</strong>
+                        <strong class="order-card-total">{{ "%.0f"|format(order.total) }} ₽</strong>
                     </div>
                     <div class="order-actions">
                         <a href="/orders/{{ order.id }}" class="btn btn-ghost">Подробнее</a>
@@ -49,11 +45,12 @@
         {% endfor %}
     </div>
 {% else %}
-    <section class="empty-state card">
-        <div class="empty-state-icon" aria-hidden="true">🧾</div>
-        <h2 class="empty-state-title">Заказов пока нет</h2>
-        <p class="empty-state-text">Оформите первый заказ — он сразу появится здесь.</p>
-        <a href="/products" class="btn btn-primary">Выбрать кофе</a>
-    </section>
+    {{ empty_state(
+        icon="🧾",
+        title="Заказов пока нет",
+        text="Оформите первый заказ — он сразу появится здесь.",
+        action_href="/products",
+        action_label="Выбрать кофе"
+    ) }}
 {% endif %}
 {% endblock %}

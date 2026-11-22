@@ -100,7 +100,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         ? "Аккаунт создан! Перенаправляем..."
                         : "Вы успешно вошли! Перенаправляем..."
                 );
-                window.location.href = "/auth/me";
+                window.location.href =
+                    data && data.role === "admin" ? "/admin" : "/products";
             } catch {
                 showError("Ошибка сети. Проверьте подключение и попробуйте снова.");
             } finally {
@@ -109,6 +110,17 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+
+    document.querySelectorAll("[data-demo-email]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+            if (!form) {
+                return;
+            }
+            form.elements.email.value = btn.dataset.demoEmail || "";
+            form.elements.password.value = btn.dataset.demoPassword || "";
+            form.requestSubmit();
+        });
+    });
 
     const logoutBtn = document.getElementById("logout-btn");
     if (logoutBtn) {

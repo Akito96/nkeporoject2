@@ -65,7 +65,11 @@ async def login_page(
     response = templates.TemplateResponse(
         request=request,
         name="auth/login.html",
-        context={"current_user": current_user, "page_title": "Вход"},
+        context={
+            "current_user": current_user,
+            "page_title": "Вход",
+            "debug": get_settings().debug,
+        },
     )
     _issue_csrf_token(request, response)
     return response

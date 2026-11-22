@@ -1,0 +1,65 @@
+{% extends "admin/base.html" %}
+{% from "macros/ui.html" import page_header, status_badge %}
+
+{% block admin_content %}
+{{ page_header("Обзор кофейни", "Сводка по каталогу, заказам и публикациям.") }}
+
+<section class="stats-grid" aria-label="Основные показатели">
+    <a href="/admin/products" class="card stat-card">
+        <span class="stat-label">Товары</span>
+        <strong class="stat-value">{{ stats.products_count }}</strong>
+    </a>
+    <a href="/admin/categories" class="card stat-card">
+        <span class="stat-label">Категории</span>
+        <strong class="stat-value">{{ stats.categories_count }}</strong>
+    </a>
+    <a href="/admin/orders" class="card stat-card">
+        <span class="stat-label">Заказы</span>
+        <strong class="stat-value">{{ stats.orders_count }}</strong>
+    </a>
+    <a href="/admin/posts" class="card stat-card">
+        <span class="stat-label">Посты блога</span>
+        <strong class="stat-value">{{ stats.posts_count }}</strong>
+    </a>
+</section>
+
+<section class="card admin-section">
+    <div class="admin-section-header">
+        <h2 class="summary-title">Последние заказы</h2>
+        <a href="/admin/orders" class="btn btn-ghost">Все заказы →</a>
+    </div>
+
+    {% if recent_orders %}
+        <div class="table-wrap">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>№</th>
+                        <th>Гость</th>
+                        <th>Дата</th>
+                        <th>Сумма</th>
+                        <th>Статус</th>
+                        <th>Чек</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in recent_orders %}
+                        <tr>
+                            <td>#{{ order.id }}</td>
+                            <td>{{ order.user_email }}</td>
+                            <td>{{ order.created_at.strftime("%d.%m.%Y %H:%M") }}</td>
+                            <td><strong>{{ "%.2f"|format(order.total) }} ₽</strong></td>
+                            <td>{{ status_badge(order.status.value, status_labels) }}</td>
+                            <td>
+                                <a href="/orders/{{ order.id }}/receipt" class="btn btn-ghost btn-sm">PDF</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="empty-state-text">Заказов пока нет.</p>
+    {% endif %}
+</section>
+{% endblock %}

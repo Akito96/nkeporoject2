@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% from "macros/ui.html" import empty_state %}
+
+{% block content %}
+<div class="error-page-wrap">
+    {{ empty_state(
+        icon="500",
+        title="Внутренняя ошибка сервера",
+        text="Что-то пошло не так на нашей стороне. Попробуйте обновить страницу или вернуться позже.",
+        action_href="/products",
+        action_label="На главную"
+    ) }}
+</div>
+{% endblock %}

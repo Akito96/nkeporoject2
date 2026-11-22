@@ -1,0 +1,79 @@
+{% extends "admin/base.html" %}
+{% from "macros/ui.html" import page_header %}
+
+{% block admin_content %}
+{{ page_header("Заказы", "Просматривайте заказы гостей и управляйте их статусами.") }}
+
+<div class="category-chips admin-status-filter" aria-label="Фильтр по статусу">
+    <a href="/admin/orders" class="chip {% if not active_status %}chip-active{% endif %}">Все</a>
+    {% for key, label in status_labels.items() %}
+        <a
+            href="/admin/orders?status={{ key }}"
+            class="chip {% if active_status == key %}chip-active{% endif %}"
+        >
+            {{ label }}
+        </a>
+    {% endfor %}
+</div>
+
+<section class="card admin-section">
+    {% if orders %}
+        <div class="table-wrap">
+            <table class="admin-table" id="admin-orders-table">
+                <thead>
+                    <tr>
+                        <th>№</th>
+                        <th>Гость</th>
+                        <th>Состав</th>
+                        <th>Сумма</th>
+                        <th>Статус</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                        <tr data-order-id="{{ order.id }}">
+                            <td>
+                                <strong>#{{ order.id }}</strong>
+                                <div class="admin-post-slug">{{ order.created_at.strftime("%d.%m.%Y %H:%M") }}</div>
+                            </td>
+                            <td>{{ order.user_email }}</td>
+                            <td>
+                                {% for item in order.items %}
+                                    <div>{{ item.product_name }} × {{ item.quantity }}</div>
+                                {% endfor %}
+                            </td>
+                            <td><strong>{{ "%.2f"|format(order.total) }} ₽</strong></td>
+                            <td>
+                                <span class="status-badge status-{{ order.status.value }}" data-order-status-badge>
+                                    {{ status_labels.get(order.status.value, order.status.value) }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="order-actions">
+                                    {% if order.allowed_next_statuses %}
+                                        <select class="form-input status-select" data-order-status-select aria-label="Новый статус заказа #{{ order.id }}">
+                                            <option value="">Сменить статус…</option>
+                                            {% for st in order.allowed_next_statuses %}
+                                                <option value="{{ st.value }}">
+                                                    {{ status_labels.get(st.value, st.value) }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                        <button type="button" class="btn btn-primary btn-sm" data-save-order-status>
+                                            ОК
+                                        </button>
+                                    {% endif %}
+                                    <a href="/orders/{{ order.id }}/receipt" class="btn btn-ghost btn-sm">Чек PDF</a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="empty-state-text">Заказов по выбранному фильтру нет.</p>
+    {% endif %}
+</section>
+{% endblock %}

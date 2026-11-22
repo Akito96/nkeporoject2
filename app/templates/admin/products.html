@@ -1,0 +1,99 @@
+{% extends "admin/base.html" %}
+{% from "macros/ui.html" import page_header %}
+
+{% block admin_content %}
+{{ page_header("Управление товарами", "Добавляйте позиции, загружайте фото (JPEG/PNG/WebP до 5 МБ) и управляйте остатками.") }}
+
+<div class="blog-admin-layout">
+    <section class="card admin-section" aria-labelledby="product-form-title">
+        <h2 id="product-form-title" class="summary-title">Новый товар</h2>
+        <form id="admin-product-form" class="auth-form" novalidate>
+            <input type="hidden" name="product_id" value="">
+
+            <div class="form-field">
+                <label for="prod-name" class="form-label">Название</label>
+                <input id="prod-name" name="name" type="text" class="form-input" required minlength="2" maxlength="200">
+            </div>
+
+            <div class="form-field">
+                <label for="prod-category" class="form-label">Категория</label>
+                <select id="prod-category" name="category_id" class="form-input" required>
+                    <option value="">Выберите категорию</option>
+                    {% for cat in categories %}
+                        <option value="{{ cat.id }}">{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-row-2">
+                <div class="form-field">
+                    <label for="prod-price" class="form-label">Цена (₽)</label>
+                    <input id="prod-price" name="price" type="number" step="0.01" min="0" class="form-input" required>
+                </div>
+                <div class="form-field">
+                    <label for="prod-stock" class="form-label">Остаток (шт.)</label>
+                    <input id="prod-stock" name="stock" type="number" min="0" step="1" value="0" class="form-input" required>
+                </div>
+            </div>
+
+            <div class="form-field">
+                <label for="prod-desc" class="form-label">Описание</label>
+                <textarea id="prod-desc" name="description" class="form-input" rows="3" maxlength="2000"></textarea>
+            </div>
+
+            <div class="form-field">
+                <label for="prod-image-file" class="form-label">Загрузить фото (JPEG, PNG, WebP, до 5 МБ)</label>
+                <input id="prod-image-file" type="file" accept="image/jpeg,image/png,image/webp" class="form-input">
+                <input id="prod-image" name="image" type="text" class="form-input" placeholder="/static/uploads/..." maxlength="500">
+            </div>
+
+            <label class="checkbox-field">
+                <input id="prod-active" name="is_active" type="checkbox" checked>
+                <span>Активен (показывать в каталоге)</span>
+            </label>
+
+            <div class="filter-actions">
+                <button type="submit" class="btn btn-primary" id="prod-submit-btn">Сохранить товар</button>
+                <button type="button" class="btn btn-ghost" id="prod-reset-btn" hidden>Отмена</button>
+            </div>
+        </form>
+    </section>
+
+    <section class="card admin-section" aria-label="Список товаров">
+        <h2 class="summary-title">Товары ({{ products|length }})</h2>
+        {% if products %}
+            <div class="admin-posts-list" id="admin-products-list">
+                {% for prod in products %}
+                    <article
+                        class="admin-post-row"
+                        data-product-id="{{ prod.id }}"
+                        data-name="{{ prod.name }}"
+                        data-category-id="{{ prod.category_id }}"
+                        data-price="{{ '%.2f'|format(prod.price) }}"
+                        data-stock="{{ prod.stock }}"
+                        data-description="{{ prod.description }}"
+                        data-image="{{ prod.image or '' }}"
+                        data-active="{{ 'true' if prod.is_active else 'false' }}"
+                    >
+                        <div class="admin-post-meta">
+                            <strong>{{ prod.name }}</strong>
+                            <span>{{ "%.2f"|format(prod.price) }} ₽ · остаток: {{ prod.stock }}</span>
+                            {% if prod.is_active %}
+                                <span class="status-badge status-done">Активен</span>
+                            {% else %}
+                                <span class="status-badge status-cancelled">Скрыт</span>
+                            {% endif %}
+                        </div>
+                        <div class="order-actions">
+                            <button type="button" class="btn btn-ghost btn-sm" data-edit-product>Изменить</button>
+                            <button type="button" class="btn btn-ghost btn-danger btn-sm" data-delete-product>Удалить</button>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="empty-state-text">Товаров пока нет.</p>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,117 @@
+{% macro stories_strip(stories) %}
+<section class="stories-strip-wrap" aria-label="Подборки и акции кофейни">
+    <div class="stories-strip">
+        {% for story in stories %}
+            <a class="story-card" href="{{ story.href }}">
+                <div class="story-card-inner">
+                    <img
+                        src="{{ story.image }}"
+                        alt="{{ story.title }}"
+                        class="story-card-img"
+                        loading="lazy"
+                    >
+                    <div class="story-card-overlay">
+                        <span class="story-card-title">{{ story.title }}</span>
+                    </div>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+</section>
+{% endmacro %}
+
+{% macro page_header(title, subtitle=None, action_href=None, action_label=None) %}
+<header class="page-header page-header-flex">
+    <div class="page-header-text">
+        <h1 class="page-title">{{ title }}</h1>
+        {% if subtitle %}
+            <p class="page-subtitle">{{ subtitle }}</p>
+        {% endif %}
+    </div>
+    {% if action_href and action_label %}
+        <a href="{{ action_href }}" class="btn btn-primary">{{ action_label }}</a>
+    {% endif %}
+</header>
+{% endmacro %}
+
+{% macro empty_state(icon, title, text, action_href=None, action_label=None, id=None, hidden=False) %}
+<section
+    class="empty-state card"
+    {% if id %}id="{{ id }}"{% endif %}
+    {% if hidden %}hidden{% endif %}
+    aria-live="polite"
+>
+    <div class="empty-state-icon" aria-hidden="true">{{ icon }}</div>
+    <h2 class="empty-state-title">{{ title }}</h2>
+    <p class="empty-state-text">{{ text }}</p>
+    {% if action_href and action_label %}
+        <a href="{{ action_href }}" class="btn btn-primary">{{ action_label }}</a>
+    {% endif %}
+</section>
+{% endmacro %}
+
+{% macro breadcrumbs(items) %}
+<nav class="breadcrumbs" aria-label="Навигация по разделам">
+    {% for label, href in items %}
+        {% if not loop.first %}
+            <span aria-hidden="true">/</span>
+        {% endif %}
+        {% if href and not loop.last %}
+            <a href="{{ href }}">{{ label }}</a>
+        {% else %}
+            <span aria-current="page">{{ label }}</span>
+        {% endif %}
+    {% endfor %}
+</nav>
+{% endmacro %}
+
+{% macro status_badge(status_value, status_labels) %}
+<span class="status-badge status-{{ status_value }}">
+    {{ status_labels.get(status_value, status_value) }}
+</span>
+{% endmacro %}
+
+{% macro alert_box(id, kind="error", message=None) %}
+<div
+    id="{{ id }}"
+    class="alert {% if kind == 'success' %}alert-success{% else %}alert-error{% endif %}"
+    role="{% if kind == 'success' %}status{% else %}alert{% endif %}"
+    aria-live="polite"
+    {% if not message %}hidden{% endif %}
+>
+    {{ message or "" }}
+</div>
+{% endmacro %}
+
+{% macro pagination_nav(base_url, page, pages, extra_query="", aria_label="Навигация по страницам") %}
+{% if pages > 1 %}
+{% set suffix = "&" ~ extra_query if extra_query else "" %}
+<nav class="pagination" aria-label="{{ aria_label }}">
+    {% if page > 1 %}
+        <a class="btn btn-ghost pagination-btn" href="{{ base_url }}?page={{ page - 1 }}{{ suffix }}">
+            ← Назад
+        </a>
+    {% else %}
+        <span class="btn btn-ghost pagination-btn is-disabled" aria-disabled="true">← Назад</span>
+    {% endif %}
+
+    <div class="pagination-pages">
+        {% for p in range(1, pages + 1) %}
+            {% if p == page %}
+                <span class="pagination-num is-current" aria-current="page">{{ p }}</span>
+            {% else %}
+                <a class="pagination-num" href="{{ base_url }}?page={{ p }}{{ suffix }}">{{ p }}</a>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    {% if page < pages %}
+        <a class="btn btn-ghost pagination-btn" href="{{ base_url }}?page={{ page + 1 }}{{ suffix }}">
+            Вперёд →
+        </a>
+    {% else %}
+        <span class="btn btn-ghost pagination-btn is-disabled" aria-disabled="true">Вперёд →</span>
+    {% endif %}
+</nav>
+{% endif %}
+{% endmacro %}

@@ -5,7 +5,7 @@ from decimal import Decimal
 from enum import StrEnum
 from typing import TYPE_CHECKING
 
-from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Integer, Numeric, String, func
+from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Index, Integer, Numeric, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
@@ -30,6 +30,7 @@ class Order(Base):
             name="order_status_valid",
         ),
         CheckConstraint("total >= 0", name="order_total_non_negative"),
+        Index("ix_orders_status_created_at", "status", "created_at"),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -65,6 +66,7 @@ class OrderItem(Base):
     __table_args__ = (
         CheckConstraint("quantity > 0", name="order_item_quantity_positive"),
         CheckConstraint("price >= 0", name="order_item_price_non_negative"),
+        Index("ix_order_items_order_product", "order_id", "product_id"),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)

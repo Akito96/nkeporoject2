@@ -1,12 +1,10 @@
 {% extends "base.html" %}
+{% from "macros/ui.html" import alert_box, empty_state, page_header %}
 
 {% block content %}
-<section class="page-header">
-    <h1 class="catalog-title">Корзина</h1>
-    <p class="catalog-subtitle">Изменяйте количество — сумма пересчитывается автоматически.</p>
-</section>
+{{ page_header("Корзина", "Изменяйте количество — сумма пересчитывается автоматически.") }}
 
-<div id="cart-alert" class="alert alert-error" role="alert" aria-live="polite" hidden></div>
+{{ alert_box("cart-alert", "error") }}
 
 <div id="cart-root">
     {% if cart.items %}
@@ -18,11 +16,25 @@
                         data-product-id="{{ item.product_id }}"
                         data-stock="{{ item.stock }}"
                     >
-                        <div class="cart-item-info">
-                            <h2 class="cart-item-title">
-                                <a href="/products/{{ item.product_id }}">{{ item.name }}</a>
-                            </h2>
-                            <p class="cart-item-price">{{ "%.2f"|format(item.price) }} ₽ за шт.</p>
+                        <div class="cart-item-main">
+                            <a class="cart-item-thumb" href="/products/{{ item.product_id }}">
+                                {% if item.image %}
+                                    <img
+                                        src="{{ item.image }}"
+                                        alt="{{ item.name }}"
+                                        class="cart-item-img"
+                                        loading="lazy"
+                                    >
+                                {% else %}
+                                    <span aria-hidden="true">☕</span>
+                                {% endif %}
+                            </a>
+                            <div class="cart-item-info">
+                                <h2 class="cart-item-title">
+                                    <a href="/products/{{ item.product_id }}">{{ item.name }}</a>
+                                </h2>
+                                <p class="cart-item-price">{{ "%.0f"|format(item.price) }} ₽ за шт.</p>
+                            </div>
                         </div>
 
                         <div class="cart-item-controls">
@@ -54,7 +66,7 @@
                             </div>
 
                             <span class="cart-item-subtotal" data-item-subtotal>
-                                {{ "%.2f"|format(item.subtotal) }} ₽
+                                {{ "%.0f"|format(item.subtotal) }} ₽
                             </span>
 
                             <button
@@ -77,7 +89,7 @@
                 </div>
                 <div class="summary-row summary-total">
                     <span>К оплате:</span>
-                    <strong id="cart-total-price">{{ "%.2f"|format(cart.total) }} ₽</strong>
+                    <strong id="cart-total-price">{{ "%.0f"|format(cart.total) }} ₽</strong>
                 </div>
                 <a href="/orders/checkout" class="btn btn-primary btn-block">
                     Перейти к оформлению
@@ -89,15 +101,14 @@
         </div>
     {% endif %}
 
-    <section
-        class="empty-state card"
-        id="cart-empty"
-        {% if cart.items %}hidden{% endif %}
-    >
-        <div class="empty-state-icon" aria-hidden="true">🛒</div>
-        <h2 class="empty-state-title">Корзина пуста</h2>
-        <p class="empty-state-text">Добавьте напитки или десерты из каталога, чтобы оформить заказ.</p>
-        <a href="/products" class="btn btn-primary">Перейти в каталог</a>
-    </section>
+    {{ empty_state(
+        icon="🛒",
+        title="Корзина пуста",
+        text="Добавьте напитки или десерты из каталога, чтобы оформить заказ.",
+        action_href="/products",
+        action_label="Перейти в каталог",
+        id="cart-empty",
+        hidden=(cart.items|length > 0)
+    ) }}
 </div>
 {% endblock %}

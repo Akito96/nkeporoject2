@@ -1,11 +1,8 @@
 {% extends "base.html" %}
+{% from "macros/ui.html" import breadcrumbs %}
 
 {% block content %}
-<nav class="breadcrumbs" aria-label="Навигация">
-    <a href="/blog">Блог</a>
-    <span aria-hidden="true">/</span>
-    <span aria-current="page">{{ post.title }}</span>
-</nav>
+{{ breadcrumbs([("Блог", "/blog"), (post.title, None)]) }}
 
 <article class="card blog-article">
     {% if post.cover %}

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title | default("Админ-панель") }} — Кофейня</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body class="admin-body">
+    <a class="skip-link" href="#main-content">Перейти к содержимому</a>
+    <div class="admin-shell">
+        <aside class="admin-sidebar" aria-label="Меню администратора">
+            <div class="admin-brand-wrap">
+                <a class="brand" href="/admin">Кофейня · Admin</a>
+                <p class="admin-user-email">{{ current_user.email }}</p>
+            </div>
+
+            <nav class="admin-nav">
+                <a class="admin-nav-link {% if active_section == 'dashboard' %}is-active{% endif %}" href="/admin">
+                    Обзор
+                </a>
+                <a class="admin-nav-link {% if active_section == 'products' %}is-active{% endif %}" href="/admin/products">
+                    Товары
+                </a>
+                <a class="admin-nav-link {% if active_section == 'categories' %}is-active{% endif %}" href="/admin/categories">
+                    Категории
+                </a>
+                <a class="admin-nav-link {% if active_section == 'orders' %}is-active{% endif %}" href="/admin/orders">
+                    Заказы
+                </a>
+                <a class="admin-nav-link {% if active_section == 'posts' %}is-active{% endif %}" href="/admin/posts">
+                    Блог
+                </a>
+                <a class="admin-nav-link {% if active_section == 'stats' %}is-active{% endif %}" href="/admin/stats">
+                    Аналитика
+                </a>
+                <a class="admin-nav-link {% if active_section == 'stickers' %}is-active{% endif %}" href="/admin/stickers">
+                    Стикеры
+                </a>
+            </nav>
+
+            <div class="admin-sidebar-footer">
+                <a class="btn btn-ghost btn-block" href="/products">← На витрину</a>
+                <button type="button" class="btn btn-ghost btn-block" id="logout-btn">Выйти</button>
+            </div>
+        </aside>
+
+        <main id="main-content" class="admin-main" tabindex="-1">
+            <div
+                id="admin-flash"
+                class="alert {% if flash_type == 'error' %}alert-error{% else %}alert-success{% endif %}"
+                role="status"
+                aria-live="polite"
+                {% if not flash_message %}hidden{% endif %}
+            >
+                {{ flash_message or "" }}
+            </div>
+
+            {% block admin_content %}{% endblock %}
+        </main>
+    </div>
+
+    <script src="/static/js/auth.js" defer></script>
+    <script src="/static/js/admin.js" defer></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

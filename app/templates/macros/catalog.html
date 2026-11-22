@@ -26,12 +26,7 @@
 
         <div class="product-card-footer">
             <div class="product-price-wrap">
-                <span class="product-price">{{ "%.2f"|format(product.price) }} ₽</span>
-                {% if product.stock > 0 %}
-                    <span class="stock-status stock-in">В наличии: {{ product.stock }}</span>
-                {% else %}
-                    <span class="stock-status stock-out">Нет в наличии</span>
-                {% endif %}
+                <span class="product-price">{{ "%.0f"|format(product.price) }} ₽</span>
             </div>
             <div class="product-card-actions">
                 {% if product.stock > 0 %}
@@ -53,9 +48,9 @@
 </article>
 {% endmacro %}
 
+{% from "macros/ui.html" import pagination_nav %}
+
 {% macro pagination(page, pages, active_category, search_query, sort, per_page) %}
-{% if pages > 1 %}
-<nav class="pagination" aria-label="Навигация по страницам">
     {% set base_params = "sort=" ~ sort ~ "&per_page=" ~ per_page %}
     {% if active_category %}
         {% set base_params = base_params ~ "&category=" ~ active_category %}
@@ -63,32 +58,5 @@
     {% if search_query %}
         {% set base_params = base_params ~ "&q=" ~ search_query|urlencode %}
     {% endif %}
-
-    {% if page > 1 %}
-        <a class="btn btn-ghost pagination-btn" href="/products?page={{ page - 1 }}&{{ base_params }}">
-            ← Назад
-        </a>
-    {% else %}
-        <span class="btn btn-ghost pagination-btn is-disabled" aria-disabled="true">← Назад</span>
-    {% endif %}
-
-    <div class="pagination-pages">
-        {% for p in range(1, pages + 1) %}
-            {% if p == page %}
-                <span class="pagination-num is-current" aria-current="page">{{ p }}</span>
-            {% else %}
-                <a class="pagination-num" href="/products?page={{ p }}&{{ base_params }}">{{ p }}</a>
-            {% endif %}
-        {% endfor %}
-    </div>
-
-    {% if page < pages %}
-        <a class="btn btn-ghost pagination-btn" href="/products?page={{ page + 1 }}&{{ base_params }}">
-            Вперёд →
-        </a>
-    {% else %}
-        <span class="btn btn-ghost pagination-btn is-disabled" aria-disabled="true">Вперёд →</span>
-    {% endif %}
-</nav>
-{% endif %}
+    {{ pagination_nav("/products", page, pages, base_params, "Навигация по страницам каталога") }}
 {% endmacro %}

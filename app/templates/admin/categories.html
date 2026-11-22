@@ -1,0 +1,57 @@
+{% extends "admin/base.html" %}
+{% from "macros/ui.html" import page_header %}
+
+{% block admin_content %}
+{{ page_header("Категории каталога", "Создавайте и редактируйте разделы меню кофейни.") }}
+
+<div class="blog-admin-layout">
+    <section class="card admin-section" aria-labelledby="cat-form-title">
+        <h2 id="cat-form-title" class="summary-title">Новая категория</h2>
+        <form id="admin-category-form" class="auth-form" novalidate>
+            <input type="hidden" name="category_id" value="">
+
+            <div class="form-field">
+                <label for="cat-name" class="form-label">Название</label>
+                <input id="cat-name" name="name" type="text" class="form-input" required minlength="2" maxlength="120">
+            </div>
+
+            <div class="form-field">
+                <label for="cat-slug" class="form-label">Slug (оставьте пустым для автогенерации)</label>
+                <input id="cat-slug" name="slug" type="text" class="form-input" placeholder="classic-coffee" maxlength="120">
+            </div>
+
+            <div class="filter-actions">
+                <button type="submit" class="btn btn-primary" id="cat-submit-btn">Сохранить категорию</button>
+                <button type="button" class="btn btn-ghost" id="cat-reset-btn" hidden>Отмена</button>
+            </div>
+        </form>
+    </section>
+
+    <section class="card admin-section" aria-label="Список категорий">
+        <h2 class="summary-title">Категории ({{ categories|length }})</h2>
+        {% if categories %}
+            <div class="admin-posts-list" id="admin-categories-list">
+                {% for cat in categories %}
+                    <article
+                        class="admin-post-row"
+                        data-category-id="{{ cat.id }}"
+                        data-name="{{ cat.name }}"
+                        data-slug="{{ cat.slug }}"
+                    >
+                        <div class="admin-post-meta">
+                            <strong>{{ cat.name }}</strong>
+                            <span class="admin-post-slug">{{ cat.slug }}</span>
+                        </div>
+                        <div class="order-actions">
+                            <button type="button" class="btn btn-ghost btn-sm" data-edit-category>Изменить</button>
+                            <button type="button" class="btn btn-ghost btn-danger btn-sm" data-delete-category>Удалить</button>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="empty-state-text">Категорий пока нет.</p>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

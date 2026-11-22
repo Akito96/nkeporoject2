@@ -1,11 +1,8 @@
 {% extends "base.html" %}
+{% from "macros/ui.html" import breadcrumbs, status_badge %}
 
 {% block content %}
-<nav class="breadcrumbs" aria-label="Навигация">
-    <a href="/orders">Мои заказы</a>
-    <span aria-hidden="true">/</span>
-    <span aria-current="page">Заказ №{{ order.id }}</span>
-</nav>
+{{ breadcrumbs([("Мои заказы", "/orders"), ("Заказ №" ~ order.id, None)]) }}
 
 <article class="card order-card order-detail-card">
     <header class="order-card-header">
@@ -15,9 +12,7 @@
                 Оформлен {{ order.created_at.strftime("%d.%m.%Y в %H:%M") }}
             </p>
         </div>
-        <span class="status-badge status-{{ order.status.value }}">
-            {{ status_labels.get(order.status.value, order.status.value) }}
-        </span>
+        {{ status_badge(order.status.value, status_labels) }}
     </header>
 
     <ul class="order-items-list">
@@ -25,8 +20,8 @@
             <li class="order-item-row">
                 <span>{{ item.product_name }} × {{ item.quantity }}</span>
                 <span>
-                    {{ "%.2f"|format(item.price) }} ₽ / шт. ·
-                    <strong>{{ "%.2f"|format(item.subtotal) }} ₽</strong>
+                    {{ "%.0f"|format(item.price) }} ₽ / шт. ·
+                    <strong>{{ "%.0f"|format(item.subtotal) }} ₽</strong>
                 </span>
             </li>
         {% endfor %}
@@ -35,7 +30,7 @@
     <footer class="order-card-footer">
         <div class="order-total-group">
             <span>Итого</span>
-            <strong class="order-card-total">{{ "%.2f"|format(order.total) }} ₽</strong>
+            <strong class="order-card-total">{{ "%.0f"|format(order.total) }} ₽</strong>
         </div>
         <div class="order-actions">
             <a href="/orders" class="btn btn-ghost">← К списку заказов</a>

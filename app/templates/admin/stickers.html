@@ -1,0 +1,102 @@
+{% extends "admin/base.html" %}
+{% from "macros/ui.html" import page_header %}
+
+{% block admin_content %}
+{{ page_header(
+    "Доска стикеров",
+    "Перетаскивайте заметки мышью или пальцем — позиция и порядок слоёв сохраняются автоматически."
+) }}
+
+<section class="card admin-section" aria-label="Создать стикер">
+    <form id="sticker-create-form" class="sticker-toolbar" novalidate>
+        <div class="form-field sticker-input-wrap">
+            <label for="sticker-new-text" class="form-label">Текст новой заметки</label>
+            <input
+                id="sticker-new-text"
+                name="text"
+                type="text"
+                class="form-input"
+                maxlength="500"
+                placeholder="Например: заказать молоко 3.2% и зерно Эфиопия..."
+                required
+            >
+        </div>
+
+        <fieldset class="sticker-color-picker">
+            <legend class="form-label">Цвет</legend>
+            <div class="sticker-swatches">
+                {% for hex_color, label in palette %}
+                    <label class="swatch-label" title="{{ label }}">
+                        <input
+                            type="radio"
+                            name="color"
+                            value="{{ hex_color }}"
+                            {% if loop.first %}checked{% endif %}
+                        >
+                        <span class="swatch-dot" style="background-color: {{ hex_color }};"></span>
+                    </label>
+                {% endfor %}
+            </div>
+        </fieldset>
+
+        <button type="submit" class="btn btn-primary" id="sticker-add-btn">
+            Добавить стикер
+        </button>
+    </form>
+</section>
+
+<section
+    id="sticker-board"
+    class="card sticker-board"
+    aria-label="Рабочая область доски стикеров"
+>
+    {% for sticker in stickers %}
+        <article
+            class="sticker-note"
+            data-sticker-id="{{ sticker.id }}"
+            data-color="{{ sticker.color }}"
+            data-z="{{ sticker.z }}"
+            style="left: {{ sticker.x }}px; top: {{ sticker.y }}px; z-index: {{ sticker.z }}; background-color: {{ sticker.color }};"
+        >
+            <header class="sticker-handle" data-drag-handle title="Перетащите стикер">
+                <span class="sticker-grip" aria-hidden="true">⋮⋮</span>
+                <div class="sticker-mini-actions">
+                    {% for hex_color, label in palette %}
+                        <button
+                            type="button"
+                            class="sticker-color-btn"
+                            style="background-color: {{ hex_color }};"
+                            data-set-color="{{ hex_color }}"
+                            aria-label="Цвет: {{ label }}"
+                            title="{{ label }}"
+                        ></button>
+                    {% endfor %}
+                    <button
+                        type="button"
+                        class="sticker-delete-btn"
+                        data-delete-sticker
+                        aria-label="Удалить стикер"
+                        title="Удалить"
+                    >
+                        ×
+                    </button>
+                </div>
+            </header>
+
+            <textarea
+                class="sticker-textarea"
+                aria-label="Текст заметки"
+                maxlength="500"
+            >{{ sticker.text }}</textarea>
+        </article>
+    {% endfor %}
+
+    <p class="sticker-board-hint" id="sticker-board-hint" {% if stickers %}hidden{% endif %}>
+        Доска пуста — создайте первый стикер выше.
+    </p>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="/static/js/stickers.js" defer></script>
+{% endblock %}

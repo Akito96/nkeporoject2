@@ -35,15 +35,7 @@
 
         <h1 class="product-detail-title">{{ product.name }}</h1>
 
-        <p class="product-detail-price">{{ "%.2f"|format(product.price) }} ₽</p>
-
-        <p class="product-detail-stock">
-            {% if product.stock > 0 %}
-                <span class="stock-status stock-in">В наличии: {{ product.stock }} шт.</span>
-            {% else %}
-                <span class="stock-status stock-out">Временно нет в наличии</span>
-            {% endif %}
-        </p>
+        <p class="product-detail-price">{{ "%.0f"|format(product.price) }} ₽</p>
 
         <div class="product-detail-desc">
             <h2>Описание</h2>

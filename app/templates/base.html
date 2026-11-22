@@ -4,10 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{{ page_title | default("Кофейня") }} — Кофейня{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/main.css">
     {% block extra_head %}{% endblock %}
 </head>
 <body>
+    <a class="skip-link" href="#main-content">Перейти к содержимому</a>
     <header class="site-header">
         <div class="container header-inner">
             <a class="brand" href="/products">Кофейня</a>
@@ -18,7 +22,7 @@
                     <a class="nav-link" href="/cart">Корзина</a>
                     <a class="nav-link" href="/orders">Заказы</a>
                     {% if current_user.role == "admin" %}
-                        <a class="nav-link" href="/blog/admin">Посты</a>
+                        <a class="nav-link" href="/admin">Админка</a>
                     {% endif %}
                     <span class="nav-user">{{ current_user.email }}</span>
                     <button type="button" class="btn btn-ghost" id="logout-btn">Выйти</button>
@@ -30,7 +34,7 @@
         </div>
     </header>
 
-    <main class="container main-content">
+    <main id="main-content" class="container main-content" tabindex="-1">
         {% block content %}{% endblock %}
     </main>
 

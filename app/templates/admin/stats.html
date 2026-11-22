@@ -1,0 +1,116 @@
+{% extends "admin/base.html" %}
+
+{% block admin_content %}
+<header class="page-header blog-header">
+    <div>
+        <h1 class="catalog-title">Статистика и аналитика</h1>
+        <p class="catalog-subtitle" id="stats-period-label">Загрузка данных за последние 30 дней…</p>
+    </div>
+    <a href="/admin/api/stats/export.csv?days=30" id="stats-export-csv" class="btn btn-primary">
+        Экспорт в CSV
+    </a>
+</header>
+
+<section class="card admin-section" aria-label="Фильтр периода">
+    <div class="stats-filter-bar">
+        <div class="stats-presets" role="group" aria-label="Быстрый выбор периода">
+            <button type="button" class="chip" data-stats-days="7">7 дней</button>
+            <button type="button" class="chip chip-active" data-stats-days="30">30 дней</button>
+            <button type="button" class="chip" data-stats-days="90">90 дней</button>
+        </div>
+
+        <form id="stats-range-form" class="stats-range-form">
+            <label class="stats-date-field">
+                <span>С</span>
+                <input type="date" id="stats-date-from" name="date_from" class="form-input">
+            </label>
+            <label class="stats-date-field">
+                <span>По</span>
+                <input type="date" id="stats-date-to" name="date_to" class="form-input">
+            </label>
+            <button type="submit" class="btn btn-ghost">Применить</button>
+        </form>
+    </div>
+</section>
+
+<section class="stats-grid" aria-label="Ключевые показатели">
+    <div class="card stat-card">
+        <span class="stat-label">Выручка за период</span>
+        <strong class="stat-value" id="kpi-revenue">—</strong>
+    </div>
+    <div class="card stat-card">
+        <span class="stat-label">Всего заказов</span>
+        <strong class="stat-value" id="kpi-orders">—</strong>
+    </div>
+    <div class="card stat-card">
+        <span class="stat-label">Средний чек</span>
+        <strong class="stat-value" id="kpi-avg-check">—</strong>
+    </div>
+    <div class="card stat-card">
+        <span class="stat-label">Активных заказов</span>
+        <strong class="stat-value" id="kpi-active-orders">—</strong>
+    </div>
+</section>
+
+<section class="charts-grid" aria-label="Графики продаж">
+    <article class="card admin-section chart-card chart-card-wide">
+        <h2 class="summary-title">Выручка по дням (₽)</h2>
+        <div class="chart-box">
+            <canvas id="chart-revenue-day" aria-label="Линейный график выручки по дням"></canvas>
+        </div>
+    </article>
+
+    <article class="card admin-section chart-card">
+        <h2 class="summary-title">Топ-10 товаров по выручке</h2>
+        <div class="chart-box">
+            <canvas id="chart-top-products" aria-label="Столбчатый график топ-10 товаров"></canvas>
+        </div>
+    </article>
+
+    <article class="card admin-section chart-card">
+        <h2 class="summary-title">Выручка по категориям</h2>
+        <div class="chart-box">
+            <canvas id="chart-revenue-category" aria-label="Диаграмма выручки по категориям"></canvas>
+        </div>
+    </article>
+</section>
+
+<div class="stats-tables-grid">
+    <section class="card admin-section" aria-label="Таблица топ-10 товаров">
+        <h2 class="summary-title">Топ-10 товаров</h2>
+        <div class="table-wrap">
+            <table class="admin-table sortable-table" id="table-top-products">
+                <thead>
+                    <tr>
+                        <th data-sort-key="product_name" data-sort-type="text" tabindex="0">Товар</th>
+                        <th data-sort-key="quantity_sold" data-sort-type="num" tabindex="0">Продано</th>
+                        <th data-sort-key="revenue" data-sort-type="num" tabindex="0">Выручка (₽)</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="card admin-section" aria-label="Таблица заказов по статусам">
+        <h2 class="summary-title">Заказы по статусам</h2>
+        <div class="table-wrap">
+            <table class="admin-table sortable-table" id="table-orders-status">
+                <thead>
+                    <tr>
+                        <th data-sort-key="status_label" data-sort-type="text" tabindex="0">Статус</th>
+                        <th data-sort-key="orders_count" data-sort-type="num" tabindex="0">Заказов</th>
+                        <th data-sort-key="revenue" data-sort-type="num" tabindex="0">Сумма (₽)</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" defer></script>
+<script src="/static/js/stats.js" defer></script>
+{% endblock %}

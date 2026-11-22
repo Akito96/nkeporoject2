@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% from "macros/ui.html" import empty_state %}
+
+{% block content %}
+<div class="error-page-wrap">
+    {{ empty_state(
+        icon="404",
+        title="Страница не найдена",
+        text="Похоже, эта страница переехала или никогда не существовала. Вернитесь в каталог за свежим кофе.",
+        action_href="/products",
+        action_label="Перейти в каталог"
+    ) }}
+</div>
+{% endblock %}
